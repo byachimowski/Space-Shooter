@@ -5,7 +5,13 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    float _speed = 3.5f;
+    private float _speed = 3.5f;
+    [SerializeField]
+    private GameObject _laserPrefab;
+    private float _canFire = -1;
+    [SerializeField]
+    private float _fireRate =.5f;
+
 
     // Start is called before the first frame update
     void Start()
@@ -19,8 +25,13 @@ public class Player : MonoBehaviour
     {
         CalculateMovement();
 
-
-
+        // Hit sapce key to spawn laser
+        if(Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire )
+        {
+            _canFire = Time.time + _fireRate;
+            
+            Instantiate(_laserPrefab, transform.position + new Vector3(0,.8f,0), Quaternion.identity);
+        }
 
     }
 
