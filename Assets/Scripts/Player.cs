@@ -11,28 +11,46 @@ public class Player : MonoBehaviour
     private float _canFire = -1;
     [SerializeField]
     private float _fireRate =.5f;
-
+    [SerializeField]
+    private int _lives =3;
+    private SpawnManager _spawnManager;
+    
 
     // Start is called before the first frame update
     void Start()
     {
         // set position to (Y=0, X=0, Z=0)
         transform.position = new Vector3(0, 0, 0);
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        if (_spawnManager == null) Debug.LogError("The _spawnManager = null!!!");
+
     }
 
     // Update is called once per frame
     void Update()
     {
         CalculateMovement();
+       
 
-        // Hit sapce key to spawn laser
         if(Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire )
         {
-            _canFire = Time.time + _fireRate;
-            
+            _canFire = Time.time + _fireRate;                     
             Instantiate(_laserPrefab, transform.position + new Vector3(0,.8f,0), Quaternion.identity);
         }
 
+
+    }
+
+    public void Damage()
+    {
+        _lives--;
+        if (_lives < 1)
+        {
+            Destroy(this.gameObject);
+            _spawnManager.OnPlayerDeath();
+            
+
+        }
     }
 
    void CalculateMovement()
