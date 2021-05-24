@@ -88,7 +88,6 @@ public class Enemy : MonoBehaviour
         Destroy(this.gameObject, 2.4f);
         _enemyIsDead = true;
        
-        
     }
 
     IEnumerator DecelSpeed()
