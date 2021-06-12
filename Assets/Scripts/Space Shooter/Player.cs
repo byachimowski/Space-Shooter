@@ -74,7 +74,9 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+        //////////////////////////////////// SHIFT KEY SPEED BOOST //////////////////////////////////////////////
+        if (Input.GetKey(KeyCode.LeftShift)) _speed = 8f;
+        else _speed = 4f;
 
         CalculateMovement();
        
