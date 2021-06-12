@@ -6,14 +6,16 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField]
     private float _speed=4f;
-    [SerializeField]
     private Player _player;
     [SerializeField]
-    private bool TestDestroy=false;
+    private GameObject enemyLaserPrefab;
+    private float _canFire = -1;
+    private float _fireRate = 3f;
+
     private bool _enemyIsDead = false;
 
     private Collider _collider;
-
+    private AudioSource _audioSource;
 
     private Animator _anim;
     
@@ -33,7 +35,11 @@ public class Enemy : MonoBehaviour
             Debug.LogError("_anim is NULL!!!");
         }
 
-       
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            Debug.LogError("Enemy _audioSource is NULL!!!");
+        }
 
 
     }
@@ -43,14 +49,27 @@ public class Enemy : MonoBehaviour
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-        if (transform.position.y <-5.5f && _player !=null && _enemyIsDead==false)
+        if (transform.position.y < -5.5f && _player != null && _enemyIsDead == false)
         {
-            transform.position = new Vector3(Random.Range(-10f,10f), 7f, 0);
+            transform.position = new Vector3(Random.Range(-10f, 10f), 7f, 0);
         }
 
-        if(TestDestroy == true)
+        if (transform.position.y < -10f )
         {
-            DestroyEnemy();// used to setup IEnumerator DecelSpeed() decel rates
+            Destroy(this.gameObject);
+        }
+
+
+        if (Time.time > _canFire)
+        {
+           _fireRate = Random.Range(1f, 3f);
+           
+            _canFire = Time.time + _fireRate;
+           
+           Instantiate(enemyLaserPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+           
+
+
         }
     }
 
@@ -77,12 +96,19 @@ public class Enemy : MonoBehaviour
             }
             DestroyEnemy();
         }
-    
+
+        if (other.tag == "Enemy_Laser")
+        {
+            Destroy(other.gameObject);
+            DestroyEnemy();
+        }
     }
 
+   
     private void DestroyEnemy()
     {
         _anim.SetTrigger("Enemy_Destroyed");
+        _audioSource.Play(); // the selected "Explosion" sound clip
         this.GetComponent<BoxCollider2D>().enabled = false;
         StartCoroutine(DecelSpeed());
         Destroy(this.gameObject, 2.4f);
@@ -94,7 +120,7 @@ public class Enemy : MonoBehaviour
     {
         while (_speed > 0)
         {
-            _speed = _speed-.01f;
+            _speed = _speed-1f;
             yield return new WaitForSeconds(.5f);
         }
     }

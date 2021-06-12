@@ -5,7 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 3.5f;
+    private float _speed = 4f;
+   
     [SerializeField]
     private GameObject _laserPrefab=null, _tripleShotPrefab=null;
     private float _canFire = -1;
@@ -21,11 +22,25 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _playerShield;
     [SerializeField]
-    private int _score;
+    private int _score =0;
     private UIManager _uiManager;
     [SerializeField]
     private GameObject _LeftPlayerDamage , _RightPlayerDamage ;
 
+    [SerializeField]
+    private AudioClip _laserSoundClip;
+    [SerializeField]
+    private AudioClip _explosionClip;
+    [SerializeField]
+    private AudioClip _powerUpSoundClip;
+    private AudioSource _audioSource;
+    [SerializeField]
+    private GameObject _explosionPrefab;
+    
+    private float _horizontalInput = 0;
+    private float _verticalInput = 0;
+    
+    private Animator _anim;
 
     // Start is called before the first frame update
     void Start()
@@ -40,16 +55,30 @@ public class Player : MonoBehaviour
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if (_uiManager == null) Debug.LogError("The _uiManager = null!!!");
 
-        
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            Debug.LogError("Player C# _audioSource is NULL");
+        }
+
+        _anim = GetComponent<Animator>();
+        if (_anim == null)
+        {
+            Debug.LogError("_anim is NULL!!!");
+        }
+
+       
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        CalculateMovement();
        
 
+        CalculateMovement();
+       
+        ///////////////////////////////////// FIRE LASERS ////////////////////////////////////////////////////
         if(Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire )
         {
             _canFire = Time.time + _fireRate;
@@ -62,15 +91,26 @@ public class Player : MonoBehaviour
                Instantiate(_laserPrefab, transform.position + new Vector3(0, .8f, 0), Quaternion.identity);
 
             }
+
+            _audioSource.clip = _laserSoundClip;//  laserSoundClip will be played when we call _audioSource.Play()
+            _audioSource.Play(); // the selected sound clip
         }
 
 
     }
-
+   
+   
+    
+    
+    
+    
+    /// ////////////////////////////////////// TRIPLE SHOT POWERUP ////////////////////////////////////////////
+    
     public void TripleShotActive()
     {
         _isTripleShotActive = true;
-       // Debug.Log("Triple Shot Aactive");
+        _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
+        _audioSource.Play(); // the selected sound clip
         StartCoroutine(TripleShotPowerDownRoutine());
 
     }
@@ -82,11 +122,18 @@ public class Player : MonoBehaviour
       //  Debug.Log("Triple Shot Inactive");
     }
 
+
+
+   
+   ///////////////////////////////////////// POWER BOOST POWERUP /////////////////////////////////////////////////
+   
     public void PowerBoostActive()
     {
         _isPowerBoostActive = true;
-        _speed = 8.5f;
-       // Debug.Log("Speed Boost Collected");
+        _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
+        _audioSource.Play(); // the selected sound clip
+        _speed = 8.0f;
+      
         StartCoroutine(PowerBoostEndRoutine());
 
     }
@@ -94,30 +141,38 @@ public class Player : MonoBehaviour
     IEnumerator PowerBoostEndRoutine()
     {
         yield return new WaitForSeconds(5.0f);
-        _speed = 3.5f;
+        _speed = 4f;
         _isPowerBoostActive = false;
         //Debug.Log("Speed Boost Over");
     }
 
+
+    
+     /// ///////////////////////////////////  SHIELDS POWERUP /////////////////////////////////////////////////////
+    
     public void ShieldsActive()
     {
         _isShieldActive = true;
+        _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
+        _audioSource.Play(); // the selected sound clip
         _playerShield.SetActive(true);
-       // Debug.Log(" Shields Collected");
-       // StartCoroutine(ShieldPowerDownRoutine());
+      
+       StartCoroutine(ShieldPowerDownRoutine());
     }
 
-    /* IEnumerator ShieldPowerDownRoutine()
+     IEnumerator ShieldPowerDownRoutine()
      {
          yield return new WaitForSeconds(5.0f);
          _isShieldActive = false;
          _playerShield.SetActive(false);
-         Debug.Log("Shields are off");
 
-     }
 
-     */
+    }
 
+   
+    
+    /// //////////////////////////////////// DAMAGE UPDATE /////////////////////////////////////////////////////
+    
     public void Damage()
     {
         if(_isShieldActive==true)
@@ -132,32 +187,41 @@ public class Player : MonoBehaviour
         if(_lives==2)
         {
             _LeftPlayerDamage.SetActive(true);
+            _uiManager.UpdateLives(_lives);
         }
 
         if (_lives == 1)
         {
             _RightPlayerDamage.SetActive(true);
+            _uiManager.UpdateLives(_lives);
         }
 
-        _uiManager.UpdateLives(_lives);
        
-        if (_lives < 1)
+       
+        if ((_lives < 1) && ( _lives > -2))/// -2 ACCOUNT FOR DOUBLE LASER HIT
         {
-            
-            
-            Destroy(gameObject);
+            _uiManager.UpdateLives(_lives);
+            Instantiate(_explosionPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
             _spawnManager.OnPlayerDeath();
-            
+             Destroy(gameObject);
 
         }
     }
 
-   void CalculateMovement()
+    
+    /////////////////////////////////////// CALULATE MOVEMENT /////////////////////////////////////////////////
+    void CalculateMovement()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime);
-        transform.Translate(Vector3.up * verticalInput * _speed * Time.deltaTime);
+
+       
+           
+        
+
+        ////////////////////////////////////// PLAYER MOVEMENT ///////////////////////////////////////////////////
+        _horizontalInput = Input.GetAxis("Horizontal");
+        _verticalInput = Input.GetAxis("Vertical");
+        transform.Translate(Vector3.right * _horizontalInput * _speed  * Time.deltaTime);
+        transform.Translate(Vector3.up * _verticalInput * _speed * Time.deltaTime);
 
         if (transform.position.y >= 0)
         {
@@ -179,7 +243,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AddScore(int points)
+    
+    /// ////////////////////////////////// UPDATE SCORE ////////////////////////////////////////////////////////
+      public void AddScore(int points)
     {
         _score += points;
         _uiManager.UpdateScore(_score);

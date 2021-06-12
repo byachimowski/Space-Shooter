@@ -20,6 +20,12 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(0); // Load "Main Menu" Scene
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit(); //allows us to quit the application while in Full screen Mode
+        }
+
     }
 
     public void PlayerIsDead()

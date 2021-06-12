@@ -3,7 +3,19 @@ guid: c1a960490ef44f848b0618b7e894467a
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - _laserPrefab: {fileID: 2717503046566825629, guid: 030abbbc768f55843b55c349301510dc,
+      type: 3}
+  - _tripleShotPrefab: {fileID: 8940465364480337985, guid: c51814069b40c8a4691cd3ee5a143305,
+      type: 3}
+  - _playerShield: {instanceID: 0}
+  - _LeftPlayerDamage: {instanceID: 0}
+  - _RightPlayerDamage: {instanceID: 0}
+  - _laserSoundClip: {fileID: 8300000, guid: 7de036931cfcf0049a6155f6db9c60ac, type: 3}
+  - _explosionClip: {fileID: 8300000, guid: 456f6ce08d5e7c948b3c25df2bb5a732, type: 3}
+  - _powerUpSoundClip: {fileID: 8300000, guid: 0532cb96329589245959d102f72bc042, type: 3}
+  - _explosionPrefab: {fileID: 3232150289256089762, guid: b40ce7cac7927774c88e144be4161b75,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
