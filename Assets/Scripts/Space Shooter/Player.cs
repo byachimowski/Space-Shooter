@@ -28,6 +28,9 @@ public class Player : MonoBehaviour
     private GameObject _LeftPlayerDamage , _RightPlayerDamage ;
 
     [SerializeField]
+    private GameObject _leftThruster, _rightThruster;
+
+    [SerializeField]
     private AudioClip _laserSoundClip;
     [SerializeField]
     private AudioClip _explosionClip;
@@ -39,6 +42,9 @@ public class Player : MonoBehaviour
     
     private float _horizontalInput = 0;
     private float _verticalInput = 0;
+    private int _shieldLevel = 3;
+   
+    public int _ammoCount = 15;
     
     private Animator _anim;
 
@@ -81,8 +87,12 @@ public class Player : MonoBehaviour
         CalculateMovement();
        
         ///////////////////////////////////// FIRE LASERS ////////////////////////////////////////////////////
-        if(Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire )
+        
+
+
+        if((Input.GetKeyDown(KeyCode.Space) | Input.GetAxis("Fire1")> 0) && Time.time > _canFire && _ammoCount >0 )
         {
+            _ammoCount = _ammoCount - 1;
             _canFire = Time.time + _fireRate;
            if (_isTripleShotActive ==true)
             {
@@ -154,12 +164,14 @@ public class Player : MonoBehaviour
     
     public void ShieldsActive()
     {
+        _playerShield.GetComponent<Renderer>().material.color = new Color32(70, 251, 84, 255);//Lite Green
         _isShieldActive = true;
+        _shieldLevel = 3;
         _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
         _audioSource.Play(); // the selected sound clip
         _playerShield.SetActive(true);
       
-       StartCoroutine(ShieldPowerDownRoutine());
+       //StartCoroutine(ShieldPowerDownRoutine());
     }
 
      IEnumerator ShieldPowerDownRoutine()
@@ -170,8 +182,29 @@ public class Player : MonoBehaviour
 
 
     }
+    ////////////////////////////////////////SHIELDS COLOR CONTROL///////////////////////////////////////////////
+   void ShieldControl(int v)
+    {
+        if (v == 3)
+        {
+            _playerShield.GetComponent<Renderer>().material.color = new Color32(70, 251, 84, 255);//Lite Green
+        }
+        if (v==2)
+        {
+            _playerShield.GetComponent<Renderer>().material.color = new Color32(238, 251, 70, 255);//Lite Yellow
+        }
 
-   
+        if (v == 1)
+        {
+            _playerShield.GetComponent<Renderer>().material.color = new Color32(251, 103, 120, 255);//Lite Red
+        }
+
+        if (v == 0)
+        {
+            _isShieldActive = false;
+            _playerShield.SetActive(false);
+        }
+    }
     
     /// //////////////////////////////////// DAMAGE UPDATE /////////////////////////////////////////////////////
     
@@ -179,9 +212,10 @@ public class Player : MonoBehaviour
     {
         if(_isShieldActive==true)
         {
-            _isShieldActive = false;
-            _playerShield.SetActive(false);
-           // Debug.Log("Shields are off");
+            
+           // _playerShield.SetActive(false);
+            _shieldLevel = _shieldLevel-1;
+            ShieldControl(_shieldLevel);
             return;
         }
 
@@ -215,13 +249,29 @@ public class Player : MonoBehaviour
     void CalculateMovement()
     {
 
-       
-           
-        
-
         ////////////////////////////////////// PLAYER MOVEMENT ///////////////////////////////////////////////////
-        _horizontalInput = Input.GetAxis("Horizontal");
-        _verticalInput = Input.GetAxis("Vertical");
+        _horizontalInput = Input.GetAxis("Horizontal") + Input.GetAxis("Horizontal_Joy");
+
+        if (_horizontalInput < 0)
+        {
+            _rightThruster.SetActive(true);
+        }
+        else
+        {
+            _rightThruster.SetActive(false);
+        }
+
+        if (_horizontalInput > 0)
+        {
+            _leftThruster.SetActive(true);
+        }
+        else
+        {
+            _leftThruster.SetActive(false);
+        }
+
+        _verticalInput = Input.GetAxis("Vertical") + Input.GetAxis("Vertical_Joy");
+
         transform.Translate(Vector3.right * _horizontalInput * _speed  * Time.deltaTime);
         transform.Translate(Vector3.up * _verticalInput * _speed * Time.deltaTime);
 

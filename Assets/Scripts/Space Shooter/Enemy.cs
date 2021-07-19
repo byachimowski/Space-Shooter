@@ -54,23 +54,21 @@ public class Enemy : MonoBehaviour
             transform.position = new Vector3(Random.Range(-10f, 10f), 7f, 0);
         }
 
-        if (transform.position.y < -10f )
+        if (transform.position.y < -10f )// clean up after player death
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
+           
         }
 
 
         if (Time.time > _canFire)
         {
-           _fireRate = Random.Range(1f, 3f);
-           
+            _fireRate = Random.Range(1f, 3f);
+
             _canFire = Time.time + _fireRate;
-           
-           Instantiate(enemyLaserPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
-           
 
-
-        }
+            Instantiate(enemyLaserPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+        }   
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -93,11 +91,12 @@ public class Enemy : MonoBehaviour
             if (_player !=null)
             {
                _player.AddScore(10);
+            
+                DestroyEnemy();
             }
-            DestroyEnemy();
         }
 
-        if (other.tag == "Enemy_Laser")
+       if (other.tag == "Enemy_Laser")
         {
             Destroy(other.gameObject);
             DestroyEnemy();

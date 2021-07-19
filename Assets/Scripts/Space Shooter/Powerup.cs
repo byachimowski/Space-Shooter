@@ -6,7 +6,7 @@ public class Powerup : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 3;
-    //PowerupID     0=Triple_Shot     1=Speed_Powerup    2=Shields
+    //PowerupID     0=Triple_Shot     1=Speed_Powerup    2=Shields Ammo = 3
     [SerializeField]
     private int _powerupID =0;
 
@@ -52,6 +52,12 @@ public class Powerup : MonoBehaviour
                 case 2:// Shield Collected
 
                     player.ShieldsActive();
+                    Destroy(this.gameObject);
+                    break;
+
+                case 3:// Ammo Collected
+
+                    player._ammoCount =15;
                     Destroy(this.gameObject);
                     break;
 
