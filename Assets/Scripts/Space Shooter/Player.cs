@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireRate =.5f;
     [SerializeField]
-    private int _lives =3;
+    private int lives =3;
     private SpawnManager _spawnManager;
     [SerializeField]
     private bool _isTripleShotActive = false;
@@ -44,8 +44,10 @@ public class Player : MonoBehaviour
     private float _verticalInput = 0;
     private int _shieldLevel = 3;
    
-    public int _ammoCount = 15;
-    
+    public int ammoCount = 15;
+    [SerializeField]
+    public int playerLives = 3;
+
     private Animator _anim;
 
     // Start is called before the first frame update
@@ -90,9 +92,9 @@ public class Player : MonoBehaviour
         
 
 
-        if((Input.GetKeyDown(KeyCode.Space) | Input.GetAxis("Fire1")> 0) && Time.time > _canFire && _ammoCount >0 )
+        if((Input.GetKeyDown(KeyCode.Space) | Input.GetAxis("Fire1")> 0) && Time.time > _canFire && ammoCount >0 )
         {
-            _ammoCount = _ammoCount - 1;
+            ammoCount = ammoCount - 1;
             _canFire = Time.time + _fireRate;
            if (_isTripleShotActive ==true)
             {
@@ -205,44 +207,92 @@ public class Player : MonoBehaviour
             _playerShield.SetActive(false);
         }
     }
-    
+
+    /////////////////////////////////////////AMMO COLLECTED////////////////////////////////////////////////////
+    public void AmmoCollected()
+    {
+        ammoCount = 15;
+        _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
+        _audioSource.Play(); // the selected sound clip
+    }
+
+    ////////////////////////////////////////HEALTH COLLECTED////////////////////////////////////////////////////
+    public void HealthCollected()
+
+    {
+        if(playerLives<3)
+        {
+            playerLives++;
+            UpDatePlayerLives();
+            _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
+            _audioSource.Play(); // the selected sound clip
+        }
+    }
+
     /// //////////////////////////////////// DAMAGE UPDATE /////////////////////////////////////////////////////
-    
+
     public void Damage()
     {
-        if(_isShieldActive==true)
+        if (_isShieldActive == true)
         {
+
             
-           // _playerShield.SetActive(false);
-            _shieldLevel = _shieldLevel-1;
+            _shieldLevel = _shieldLevel - 1;
             ShieldControl(_shieldLevel);
             return;
         }
-
-         _lives--;
-        if(_lives==2)
+        else
         {
-            _LeftPlayerDamage.SetActive(true);
-            _uiManager.UpdateLives(_lives);
-        }
-
-        if (_lives == 1)
-        {
-            _RightPlayerDamage.SetActive(true);
-            _uiManager.UpdateLives(_lives);
-        }
-
-       
-       
-        if ((_lives < 1) && ( _lives > -2))/// -2 ACCOUNT FOR DOUBLE LASER HIT
-        {
-            _uiManager.UpdateLives(_lives);
-            Instantiate(_explosionPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
-            _spawnManager.OnPlayerDeath();
-             Destroy(gameObject);
-
+            playerLives--;
+            UpDatePlayerLives();
         }
     }
+
+    private void UpDatePlayerLives()
+    {
+
+
+
+
+        if (playerLives >= 3)
+        {
+            _LeftPlayerDamage.SetActive(false);
+            _uiManager.UpdateLives(playerLives);
+        }
+
+        if (playerLives == 2)
+        {
+            _LeftPlayerDamage.SetActive(true);
+            _RightPlayerDamage.SetActive(false);
+            _uiManager.UpdateLives(playerLives);
+        }
+
+        if (playerLives == 1)
+        {
+            _RightPlayerDamage.SetActive(true);
+            _uiManager.UpdateLives(playerLives);
+        }
+
+
+
+        if ((playerLives < 1) && (playerLives > -2))/// -2 ACCOUNT FOR DOUBLE LASER HIT
+        {
+            _uiManager.UpdateLives(playerLives);
+            Instantiate(_explosionPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+            _spawnManager.OnPlayerDeath();
+            Destroy(gameObject);
+
+        }
+
+
+
+    }
+
+    
+
+
+
+
 
     
     /////////////////////////////////////// CALULATE MOVEMENT /////////////////////////////////////////////////

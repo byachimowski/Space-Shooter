@@ -6,14 +6,15 @@ public class Powerup : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 3;
-    //PowerupID     0=Triple_Shot     1=Speed_Powerup    2=Shields Ammo = 3
+    //PowerupID     0=Triple_Shot   1=Speed_Powerup   2=Shields   3=Ammo   4= Health 
     [SerializeField]
     private int _powerupID =0;
-
+    private UIManager _uiManager;
     // Start is called before the first frame update
     void Start()
     {
-        
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (_uiManager == null) Debug.LogError("The _uiManager = null!!!");
     }
 
     // Update is called once per frame
@@ -57,9 +58,16 @@ public class Powerup : MonoBehaviour
 
                 case 3:// Ammo Collected
 
-                    player._ammoCount =15;
+                    player.AmmoCollected();
                     Destroy(this.gameObject);
                     break;
+
+                case 4:// Health Collected
+
+                    player.HealthCollected();
+                    Destroy(this.gameObject);
+                    break;
+
 
                 default: Debug.Log(" switch (_powerupID) exited as DEFAULT");
                     return;

@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     private float _speed=4f;
     private Player _player;
     [SerializeField]
-    private GameObject enemyLaserPrefab;
+    private GameObject LaserPrefab;
     private float _canFire = -1;
     private float _fireRate = 3f;
 
@@ -61,13 +61,15 @@ public class Enemy : MonoBehaviour
         }
 
 
-        if (Time.time > _canFire)
+        if (Time.time > _canFire &&  (_enemyIsDead == false))
         {
             _fireRate = Random.Range(1f, 3f);
 
             _canFire = Time.time + _fireRate;
 
-            Instantiate(enemyLaserPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+            GameObject enemyLaser =  Instantiate(LaserPrefab, transform.position + new Vector3(0, -.9f, 0), Quaternion.identity);
+            enemyLaser.GetComponent<Laser>().AsssignEnemyLaser();
+           // Debug.Break();
         }   
     }
 
@@ -106,12 +108,13 @@ public class Enemy : MonoBehaviour
    
     private void DestroyEnemy()
     {
+        _enemyIsDead = true;
         _anim.SetTrigger("Enemy_Destroyed");
         _audioSource.Play(); // the selected "Explosion" sound clip
         this.GetComponent<BoxCollider2D>().enabled = false;
         StartCoroutine(DecelSpeed());
         Destroy(this.gameObject, 2.4f);
-        _enemyIsDead = true;
+        
        
     }
 
