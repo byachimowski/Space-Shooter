@@ -98,7 +98,20 @@ public class Enemy : MonoBehaviour
             }
         }
 
-       if (other.tag == "Enemy_Laser")
+        if (other.tag == "Player_Missile")
+        {
+
+            Destroy(other.gameObject);
+
+            if (_player != null)
+            {
+                _player.AddScore(10);
+
+                DestroyEnemy();
+            }
+        }
+
+        if (other.tag == "Enemy_Laser")
         {
             Destroy(other.gameObject);
             DestroyEnemy();

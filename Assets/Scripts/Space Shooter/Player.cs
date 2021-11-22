@@ -19,8 +19,9 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
     private bool _isPowerBoostActive = false;
     private bool _isShieldActive = false;
+    private bool _isPlayerMissileActive = false;
     [SerializeField]
-    private GameObject _playerShield;
+    private GameObject _playerShield, _playerMissile;
     [SerializeField]
     private int _score =0;
     private UIManager _uiManager;
@@ -88,19 +89,25 @@ public class Player : MonoBehaviour
 
         CalculateMovement();
        
-        ///////////////////////////////////// FIRE LASERS ////////////////////////////////////////////////////
+        ///////////////////////////////////// FIRE WEAPON ////////////////////////////////////////////////////
         
-
-
         if((Input.GetKeyDown(KeyCode.Space) | Input.GetAxis("Fire1")> 0) && Time.time > _canFire && ammoCount >0 )
         {
             ammoCount = ammoCount - 1;
             _canFire = Time.time + _fireRate;
-           if (_isTripleShotActive ==true)
+
+            if (_isPlayerMissileActive == true)// FIRE MISSILE
+            {
+                Instantiate(_playerMissile, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+            }
+            
+
+            if (_isTripleShotActive ==true) //FIRE TRIPLESHOOT
             {
                 Instantiate(_tripleShotPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
             }
-            else
+
+            if(_isPlayerMissileActive == false && _isTripleShotActive == false) // FIRE LASERS
             {
                Instantiate(_laserPrefab, transform.position + new Vector3(0, .8f, 0), Quaternion.identity);
 
@@ -110,16 +117,36 @@ public class Player : MonoBehaviour
             _audioSource.Play(); // the selected sound clip
         }
 
+        ///////////////////////////////////// FIRE MISSILE ////////////////////////////////////////////////////
+        if (Input.GetKeyDown(KeyCode.M))
+           {
+            Instantiate(_playerMissile, transform.position + new Vector3(0, .8f, 0), Quaternion.identity);
+        }
+
 
     }
    
+   ///////////////////////////////////////////PLAYER MISSILE POWERUP//////////////////////////////////////////
    
-    
-    
-    
-    
+     public void PlayerMissileActive()
+    {
+        _isPlayerMissileActive = true;
+        _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
+        _audioSource.Play(); // the selected sound clip
+        StartCoroutine(PlayerMissilePowerDownRoutine());
+    }
+
+    IEnumerator PlayerMissilePowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isPlayerMissileActive = false;
+        //  Debug.Log("Triple Shot Inactive");
+    }
+
+
+
     /// ////////////////////////////////////// TRIPLE SHOT POWERUP ////////////////////////////////////////////
-    
+
     public void TripleShotActive()
     {
         _isTripleShotActive = true;

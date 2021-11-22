@@ -8,9 +8,14 @@ MonoImporter:
       type: 3}
   - _tripleShotPrefab: {fileID: 8940465364480337985, guid: c51814069b40c8a4691cd3ee5a143305,
       type: 3}
-  - _playerShield: {instanceID: 0}
+  - _playerShield: {fileID: 7038449378623237037, guid: d602f4cbc8a8353458d17d6b0da0d6e1,
+      type: 3}
+  - _playerMissile: {fileID: 5198340429845072749, guid: 1b72513d20be419418cd6eb9ddc6fb7f,
+      type: 3}
   - _LeftPlayerDamage: {instanceID: 0}
   - _RightPlayerDamage: {instanceID: 0}
+  - _leftThruster: {instanceID: 0}
+  - _rightThruster: {instanceID: 0}
   - _laserSoundClip: {fileID: 8300000, guid: 7de036931cfcf0049a6155f6db9c60ac, type: 3}
   - _explosionClip: {fileID: 8300000, guid: 456f6ce08d5e7c948b3c25df2bb5a732, type: 3}
   - _powerUpSoundClip: {fileID: 8300000, guid: 0532cb96329589245959d102f72bc042, type: 3}

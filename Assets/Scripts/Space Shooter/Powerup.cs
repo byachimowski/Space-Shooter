@@ -6,7 +6,7 @@ public class Powerup : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 3;
-    //PowerupID     0=Triple_Shot   1=Speed_Powerup   2=Shields   3=Ammo   4= Health 
+    //PowerupID     0=Triple_Shot   1=Speed_Powerup   2=Shields   3=Ammo   4= Health  5=Missile
     [SerializeField]
     private int _powerupID =0;
     private UIManager _uiManager;
@@ -30,7 +30,7 @@ public class Powerup : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-
+        Debug.Log("Player Hit");
         if (other.tag == "Player")
         {
             Player player = other.transform.GetComponent<Player>();//created abreviated function label "player" 
@@ -66,6 +66,13 @@ public class Powerup : MonoBehaviour
 
                     player.HealthCollected();
                     Destroy(this.gameObject);
+                    break;
+
+                case 5:// Missile Collected
+
+                    player.PlayerMissileActive();
+                    Destroy(this.gameObject);
+                    Debug.Log("Player_Missile PowerUp Hit");
                     break;
 
 
