@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public CameraShake cameraShake;
+
     [SerializeField]
     private float _speed = 4f;
    
@@ -87,7 +89,9 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift)) _speed = 8f;
         else _speed = 4f;
 
-        CalculateMovement();
+       
+
+            CalculateMovement();
        
         ///////////////////////////////////// FIRE WEAPON ////////////////////////////////////////////////////
         
@@ -119,11 +123,12 @@ public class Player : MonoBehaviour
 
         ///////////////////////////////////// FIRE MISSILE ////////////////////////////////////////////////////
         if (Input.GetKeyDown(KeyCode.M))
-           {
+        {
             Instantiate(_playerMissile, transform.position + new Vector3(0, .8f, 0), Quaternion.identity);
+            Debug.Log("M key pressed");
         }
 
-
+       
     }
    
    ///////////////////////////////////////////PLAYER MISSILE POWERUP//////////////////////////////////////////
@@ -271,6 +276,7 @@ public class Player : MonoBehaviour
         else
         {
             playerLives--;
+            StartCoroutine(cameraShake.Shake(.3f, .2f)); //Shake(duration, magnitude)
             UpDatePlayerLives();
         }
     }

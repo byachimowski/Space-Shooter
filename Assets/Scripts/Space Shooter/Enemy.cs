@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
 
     private Collider _collider;
     private AudioSource _audioSource;
-
+   
     private Animator _anim;
     
         // Start is called before the first frame update
@@ -59,8 +59,7 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
            
         }
-
-
+        
         if (Time.time > _canFire &&  (_enemyIsDead == false))
         {
             _fireRate = Random.Range(1f, 3f);
@@ -70,7 +69,9 @@ public class Enemy : MonoBehaviour
             GameObject enemyLaser =  Instantiate(LaserPrefab, transform.position + new Vector3(0, -.9f, 0), Quaternion.identity);
             enemyLaser.GetComponent<Laser>().AsssignEnemyLaser();
            // Debug.Break();
-        }   
+        }
+
+       
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -79,6 +80,7 @@ public class Enemy : MonoBehaviour
         if (other.tag== "Player")
         {                   
             other.transform.GetComponent<Player>().Damage();
+          
             //_speed = 1;
             _anim.SetTrigger("Enemy_Destroyed");
             
