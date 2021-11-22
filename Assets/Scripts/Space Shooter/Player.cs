@@ -78,8 +78,8 @@ public class Player : MonoBehaviour
             Debug.LogError("_anim is NULL!!!");
         }
 
-       
-
+        _uiManager.UpdateAmmo(ammoCount);
+      
     }
 
     // Update is called once per frame
@@ -98,6 +98,7 @@ public class Player : MonoBehaviour
         if((Input.GetKeyDown(KeyCode.Space) | Input.GetAxis("Fire1")> 0) && Time.time > _canFire && ammoCount >0 )
         {
             ammoCount = ammoCount - 1;
+            _uiManager.UpdateAmmo(ammoCount);
             _canFire = Time.time + _fireRate;
 
             if (_isPlayerMissileActive == true)// FIRE MISSILE
@@ -244,6 +245,7 @@ public class Player : MonoBehaviour
     public void AmmoCollected()
     {
         ammoCount = 15;
+        _uiManager.UpdateAmmo(ammoCount);
         _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
         _audioSource.Play(); // the selected sound clip
     }
