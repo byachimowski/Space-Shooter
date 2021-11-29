@@ -8,14 +8,14 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float _speed = 4f;
-   
+
     [SerializeField]
-    private GameObject _laserPrefab=null, _tripleShotPrefab=null;
+    private GameObject _laserPrefab = null, _tripleShotPrefab = null;
     private float _canFire = -1;
     [SerializeField]
-    private float _fireRate =.5f;
+    private float _fireRate = .5f;
     [SerializeField]
-    private int lives =3;
+    private int lives = 3;
     private SpawnManager _spawnManager;
     [SerializeField]
     private bool _isTripleShotActive = false;
@@ -25,10 +25,10 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _playerShield, _playerMissile;
     [SerializeField]
-    private int _score =0;
+    private int _score = 0;
     private UIManager _uiManager;
     [SerializeField]
-    private GameObject _LeftPlayerDamage , _RightPlayerDamage ;
+    private GameObject _LeftPlayerDamage, _RightPlayerDamage;
 
     [SerializeField]
     private GameObject _leftThruster, _rightThruster;
@@ -42,11 +42,12 @@ public class Player : MonoBehaviour
     private AudioSource _audioSource;
     [SerializeField]
     private GameObject _explosionPrefab;
-    
+
     private float _horizontalInput = 0;
     private float _verticalInput = 0;
     private int _shieldLevel = 3;
-   
+    [SerializeField]
+    private float ThrusterValue = 1f;
     public int ammoCount = 15;
     [SerializeField]
     public int playerLives = 3;
@@ -79,23 +80,27 @@ public class Player : MonoBehaviour
         }
 
         _uiManager.UpdateAmmo(ammoCount);
-      
+        ThrusterValue = 1f;
     }
 
     // Update is called once per frame
     void Update()
     {
         //////////////////////////////////// SHIFT KEY SPEED BOOST //////////////////////////////////////////////
-        if (Input.GetKey(KeyCode.LeftShift)) _speed = 8f;
+        if ((Input.GetKey(KeyCode.LeftShift)) && ThrusterValue > .01f)
+        {
+            _speed = 8f;
+
+        }
         else _speed = 4f;
 
-       
 
-            CalculateMovement();
-       
+
+        CalculateMovement();
+
         ///////////////////////////////////// FIRE WEAPON ////////////////////////////////////////////////////
-        
-        if((Input.GetKeyDown(KeyCode.Space) | Input.GetAxis("Fire1")> 0) && Time.time > _canFire && ammoCount >0 )
+
+        if ((Input.GetKeyDown(KeyCode.Space) | Input.GetAxis("Fire1") > 0) && Time.time > _canFire && ammoCount > 0)
         {
             ammoCount = ammoCount - 1;
             _uiManager.UpdateAmmo(ammoCount);
@@ -105,16 +110,16 @@ public class Player : MonoBehaviour
             {
                 Instantiate(_playerMissile, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
             }
-            
 
-            if (_isTripleShotActive ==true) //FIRE TRIPLESHOOT
+
+            if (_isTripleShotActive == true) //FIRE TRIPLESHOOT
             {
                 Instantiate(_tripleShotPrefab, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
             }
 
-            if(_isPlayerMissileActive == false && _isTripleShotActive == false) // FIRE LASERS
+            if (_isPlayerMissileActive == false && _isTripleShotActive == false) // FIRE LASERS
             {
-               Instantiate(_laserPrefab, transform.position + new Vector3(0, .8f, 0), Quaternion.identity);
+                Instantiate(_laserPrefab, transform.position + new Vector3(0, .8f, 0), Quaternion.identity);
 
             }
 
@@ -129,12 +134,12 @@ public class Player : MonoBehaviour
             Debug.Log("M key pressed");
         }
 
-       
+
     }
-   
-   ///////////////////////////////////////////PLAYER MISSILE POWERUP//////////////////////////////////////////
-   
-     public void PlayerMissileActive()
+
+    ///////////////////////////////////////////PLAYER MISSILE POWERUP//////////////////////////////////////////
+
+    public void PlayerMissileActive()
     {
         _isPlayerMissileActive = true;
         _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
@@ -166,21 +171,22 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(5.0f);
         _isTripleShotActive = false;
-      //  Debug.Log("Triple Shot Inactive");
+        //  Debug.Log("Triple Shot Inactive");
     }
 
 
 
-   
-   ///////////////////////////////////////// POWER BOOST POWERUP /////////////////////////////////////////////////
-   
+
+    ///////////////////////////////////////// POWER BOOST POWERUP /////////////////////////////////////////////////
+
     public void PowerBoostActive()
     {
         _isPowerBoostActive = true;
+        _uiManager.UpdateThrusterSlider(1f);
         _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
         _audioSource.Play(); // the selected sound clip
         _speed = 8.0f;
-      
+
         StartCoroutine(PowerBoostEndRoutine());
 
     }
@@ -194,9 +200,9 @@ public class Player : MonoBehaviour
     }
 
 
-    
-     /// ///////////////////////////////////  SHIELDS POWERUP /////////////////////////////////////////////////////
-    
+
+    /// ///////////////////////////////////  SHIELDS POWERUP /////////////////////////////////////////////////////
+
     public void ShieldsActive()
     {
         _playerShield.GetComponent<Renderer>().material.color = new Color32(70, 251, 84, 255);//Lite Green
@@ -205,26 +211,26 @@ public class Player : MonoBehaviour
         _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
         _audioSource.Play(); // the selected sound clip
         _playerShield.SetActive(true);
-      
-       //StartCoroutine(ShieldPowerDownRoutine());
+
+        //StartCoroutine(ShieldPowerDownRoutine());
     }
 
-     IEnumerator ShieldPowerDownRoutine()
-     {
-         yield return new WaitForSeconds(5.0f);
-         _isShieldActive = false;
-         _playerShield.SetActive(false);
+    IEnumerator ShieldPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isShieldActive = false;
+        _playerShield.SetActive(false);
 
 
     }
     ////////////////////////////////////////SHIELDS COLOR CONTROL///////////////////////////////////////////////
-   void ShieldControl(int v)
+    void ShieldControl(int v)
     {
         if (v == 3)
         {
             _playerShield.GetComponent<Renderer>().material.color = new Color32(70, 251, 84, 255);//Lite Green
         }
-        if (v==2)
+        if (v == 2)
         {
             _playerShield.GetComponent<Renderer>().material.color = new Color32(238, 251, 70, 255);//Lite Yellow
         }
@@ -254,7 +260,7 @@ public class Player : MonoBehaviour
     public void HealthCollected()
 
     {
-        if(playerLives<3)
+        if (playerLives < 3)
         {
             playerLives++;
             UpDatePlayerLives();
@@ -270,7 +276,7 @@ public class Player : MonoBehaviour
         if (_isShieldActive == true)
         {
 
-            
+
             _shieldLevel = _shieldLevel - 1;
             ShieldControl(_shieldLevel);
             return;
@@ -323,13 +329,13 @@ public class Player : MonoBehaviour
 
     }
 
-    
 
 
 
 
 
-    
+
+
     /////////////////////////////////////// CALULATE MOVEMENT /////////////////////////////////////////////////
     void CalculateMovement()
     {
@@ -357,7 +363,7 @@ public class Player : MonoBehaviour
 
         _verticalInput = Input.GetAxis("Vertical") + Input.GetAxis("Vertical_Joy");
 
-        transform.Translate(Vector3.right * _horizontalInput * _speed  * Time.deltaTime);
+        transform.Translate(Vector3.right * _horizontalInput * _speed * Time.deltaTime);
         transform.Translate(Vector3.up * _verticalInput * _speed * Time.deltaTime);
 
         if (transform.position.y >= 0)
@@ -378,9 +384,20 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(11f, transform.position.y, 0);
         }
-    }
 
+        //////////////////////////////////////Thruster Level Update////////////////////////////////////////////////
+        ///The speed boost power up restores the Thrusters to 100%
+        if ((Input.GetKey(KeyCode.LeftShift) && _horizontalInput != 0))
+        {
+            ThrusterValue -= .001f;
+            _uiManager.UpdateThrusterSlider(ThrusterValue);
+
+        }
+
+
+    }
     
+
     /// ////////////////////////////////// UPDATE SCORE ////////////////////////////////////////////////////////
       public void AddScore(int points)
     {

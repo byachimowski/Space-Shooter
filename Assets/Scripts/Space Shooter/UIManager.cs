@@ -17,29 +17,31 @@ public class UIManager : MonoBehaviour
     private Image _LivesImg;
     [SerializeField]
     private Text _GameOver;
+    [SerializeField]
+    public Slider Thruster;
+   
    
     [SerializeField]
     private Text _RestartGame;
     [SerializeField]
     private GameManager gameManager;
    
-
+    
 
     // Start is called before the first frame update
     void Start()
     {
         _scoreText.text = " Score: " + 0;
-      
+        Thruster.value = 1f;
         _GameOver.gameObject.SetActive(false);
         gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         if(gameManager==null) Debug.LogError("Game_Manager::GameManager is NULL!!!");
        
     }
 
-    // Update is called once per frame
-    void Update()
+   public void UpdateThrusterSlider(float value)
     {
-       
+        Thruster.value = value;
     }
 
     public void UpdateScore(int playerScore)
@@ -67,7 +69,7 @@ public class UIManager : MonoBehaviour
     {
         StartCoroutine(BlinkRoutine());
         gameManager.PlayerIsDead();
-        Debug.Log("BlinkRoutine Called");
+       
         _GameOver.gameObject.SetActive(true);
         _RestartGame.gameObject.SetActive(true);
 
@@ -84,7 +86,7 @@ public class UIManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
            
             _GameOver.gameObject.SetActive(false);
-            //_RestartGame.gameObject.SetActive(false);
+           
             yield return new WaitForSeconds(1f);
 
             
