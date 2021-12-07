@@ -399,8 +399,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 298.31973, y: 191.7}
-  m_SizeDelta: {x: 144.74944, y: 36.059746}
+  m_AnchoredPosition: {x: 279.78, y: 191.7}
+  m_SizeDelta: {x: 181.82567, y: 36.059746}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &264789823
 MonoBehaviour:
@@ -434,7 +434,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: ' Score:'
+  m_Text: ' Score: 0'
 --- !u!222 &264789824
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2452,8 +2452,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -94.055, y: -75.026}
-  m_SizeDelta: {x: 160, y: 47.34829}
+  m_AnchoredPosition: {x: -112.6, y: -75.026}
+  m_SizeDelta: {x: 197.06247, y: 47.34829}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1949310588
 MonoBehaviour:
@@ -2487,7 +2487,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Ammo:'
+  m_Text: 'Ammo: 15/15'
 --- !u!222 &1949310589
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -51,7 +51,8 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAmmo(int playerAmmo)
     {
-        _ammoText.text = "Ammo: " + playerAmmo.ToString();
+        
+        _ammoText.text = "Ammo: " + playerAmmo.ToString() + "/15"; 
     }
 
     public void UpdateLives(int currentLives)
