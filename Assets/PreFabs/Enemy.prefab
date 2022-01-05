@@ -148,6 +148,12 @@ MonoBehaviour:
   _speed: 2
   LaserPrefab: {fileID: 2717503046566825629, guid: 030abbbc768f55843b55c349301510dc,
     type: 3}
+  _xAxis: 0
+  _countValue: 30
+  _xAxisMaxCountValue: 60
+  _xAxisMinCountValue: -60
+  _xAxisSpeed: 1
+  _countUp: 1
 --- !u!95 &4063422602258010768
 Animator:
   serializedVersion: 3

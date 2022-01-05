@@ -47,7 +47,7 @@ public class Player : MonoBehaviour
     private float _verticalInput = 0;
     private int _shieldLevel = 3;
     [SerializeField]
-    private float ThrusterValue = 1f;
+    private float _thrusterValue = 1f;
     public int ammoCount = 15;
     [SerializeField]
     public int playerLives = 3;
@@ -80,20 +80,39 @@ public class Player : MonoBehaviour
         }
 
         _uiManager.UpdateAmmo(ammoCount);
-        ThrusterValue = 1f;
+        _thrusterValue = 1f;
     }
 
     // Update is called once per frame
     void Update()
     {
         //////////////////////////////////// SHIFT KEY SPEED BOOST //////////////////////////////////////////////
-        if ((Input.GetKey(KeyCode.LeftShift)) && ThrusterValue > .01f)
+        if ((Input.GetKey(KeyCode.LeftShift)) && _thrusterValue > .01f)
         {
             _speed = 8f;
 
         }
-        else _speed = 4f;
+        else
+        {
+            if(_isPowerBoostActive == false) _speed = 4f; //fixed power boost not speeding up bug
 
+        }
+        //////////////////////////////////////Thruster Level Update////////////////////////////////////////////////
+        ///The speed boost power up restores the Thrusters to 100%
+        if ((Input.GetKey(KeyCode.LeftShift) && _horizontalInput != 0))
+        {
+            _thrusterValue -= .001f; // discharge rate
+            _uiManager.UpdateThrusterSlider(_thrusterValue);
+
+        }
+        else
+        {
+            if (_thrusterValue < 1)
+            {
+                _thrusterValue += .0001f;//recharge rate
+                _uiManager.UpdateThrusterSlider(_thrusterValue);
+            }
+        }
 
 
         CalculateMovement();
@@ -141,6 +160,7 @@ public class Player : MonoBehaviour
 
     public void PlayerMissileActive()
     {
+        ammoCount = 15;
         _isPlayerMissileActive = true;
         _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
         _audioSource.Play(); // the selected sound clip
@@ -160,6 +180,7 @@ public class Player : MonoBehaviour
 
     public void TripleShotActive()
     {
+        ammoCount = 15;
         _isTripleShotActive = true;
         _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
         _audioSource.Play(); // the selected sound clip
@@ -182,10 +203,11 @@ public class Player : MonoBehaviour
     public void PowerBoostActive()
     {
         _isPowerBoostActive = true;
+        _speed = 8.0f;
         _uiManager.UpdateThrusterSlider(1f);
         _audioSource.clip = _powerUpSoundClip;//  PowerUp Sound Clip will be played when we call _audioSource.Play()
         _audioSource.Play(); // the selected sound clip
-        _speed = 8.0f;
+        
 
         StartCoroutine(PowerBoostEndRoutine());
 
@@ -385,14 +407,7 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(11f, transform.position.y, 0);
         }
 
-        //////////////////////////////////////Thruster Level Update////////////////////////////////////////////////
-        ///The speed boost power up restores the Thrusters to 100%
-        if ((Input.GetKey(KeyCode.LeftShift) && _horizontalInput != 0))
-        {
-            ThrusterValue -= .001f;
-            _uiManager.UpdateThrusterSlider(ThrusterValue);
-
-        }
+       
 
 
     }

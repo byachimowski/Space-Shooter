@@ -11,6 +11,19 @@ public class Enemy : MonoBehaviour
     private GameObject LaserPrefab;
     private float _canFire = -1;
     private float _fireRate = 3f;
+    [SerializeField]
+    private float _xAxis = 0;
+    [SerializeField]
+    private float _countValue =0f;
+    [SerializeField]
+    private float _xAxisMaxCountValue =60f;
+    [SerializeField]
+    private float _xAxisMinCountValue =-60f;
+    [SerializeField]
+    private float _xAxisSpeed;
+    [SerializeField]
+    private bool _countUp = true;
+    
 
     private bool _enemyIsDead = false;
 
@@ -47,7 +60,9 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        
+
+
 
         if (transform.position.y < -5.5f && _player != null && _enemyIsDead == false)
         {
@@ -72,6 +87,32 @@ public class Enemy : MonoBehaviour
         }
 
        
+    }
+
+    private void FixedUpdate()
+    {
+        //////////////////////////////////CORE 2 New Enemy Movement //////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (_countUp == true)
+        {
+            _countValue++;
+            _xAxis = 1f;
+            if (_countValue > _xAxisMaxCountValue) _countUp = false;
+
+        }
+
+        if (_countUp == false)
+        {
+            _countValue--;
+            _xAxis = -1f;
+            if (_countValue < _xAxisMinCountValue) _countUp = true;
+
+        }
+
+        transform.Translate(_xAxis * _xAxisSpeed * Time.deltaTime, -1f * _speed * Time.deltaTime, 0f);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -133,7 +174,7 @@ public class Enemy : MonoBehaviour
        
     }
 
-    IEnumerator DecelSpeed()
+    IEnumerator DecelSpeed()// simulates loss of power during explosion
     {
         while (_speed > 0)
         {

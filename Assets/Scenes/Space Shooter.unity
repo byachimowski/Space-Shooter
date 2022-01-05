@@ -2581,7 +2581,7 @@ MonoBehaviour:
   _powerUpSoundClip: {fileID: 8300000, guid: 0532cb96329589245959d102f72bc042, type: 3}
   _explosionPrefab: {fileID: 3232150289256089762, guid: b40ce7cac7927774c88e144be4161b75,
     type: 3}
-  ThrusterValue: 1
+  _thrusterValue: 1
   ammoCount: 15
   playerLives: 3
 --- !u!212 &2100656248
